@@ -1,48 +1,47 @@
-const express = require('express');
-const { Client, Users } = require('node-appwrite');
-const app = express();
+import { Client, Users } from 'node-appwrite';
 
-// Initialize Appwrite client
-const client = new Client()
-  .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
-  .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID);
-const users = new Users(client);
+// This Appwrite function will be executed every time your function is triggered
+export default async ({ req, res, log, error }) => {
+  // You can use the Appwrite SDK to interact with other services
+  // For this example, we're using the Users service
+  const client = new Client()
+    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
+    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+    .setKey(req.headers['x-appwrite-key'] ?? '');
+  const users = new Users(client);
 
-// Middleware to set Appwrite key from headers
-app.use((req, res, next) => {
-  client.setKey(req.headers['x-appwrite-key'] ?? '');
-  next();
-});
-
-// Route to list users
-app.get('/users', async (req, res) => {
   try {
     const response = await users.list();
-    console.log(`Total users: ${response.total}`);
-    res.json(response);
-  } catch (err) {
-    console.error("Could not list users: " + err.message);
-    res.status(500).json({ error: "Could not list users" });
+    // Log messages and errors to the Appwrite Console
+    // These logs won't be seen by your end users
+    log(`Total users: ${response.total}`);
+  } catch(err) {
+    error("Could not list users: " + err.message);
   }
-});
 
-// Ping route
-app.get('/ping', (req, res) => {
-  res.send('Pong');
-});
+  // The req object contains the request data
+  if (req.path === "/ping") {
+    // Use res object to respond with text(), json(), or binary()
+    // Don't forget to return a response!
+    return res.text("Pong");
+  }
 
-// Default route
-app.get('/', (req, res) => {
-  res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
-  });
-});
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  return res.send(
+    `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>My Appwrite App</title>
+      </head>
+      <body>
+        <h1>${'ya'}</h1>
+        <ul>
+          <li><a href="${'https://appwrite.io/docs'}">Learn More</a></li>
+          <li><a href="${'https://appwrite.io/docs'}">Join Discord</a></li>
+          <li><a href="${'https://appwrite.io/docs'}">Get Inspired</a></li>
+        </ul>
+      </body>
+    </html>`,
+    200,
+    {'content-type': 'text/html'}
+  );
+};
