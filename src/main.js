@@ -8,9 +8,9 @@ export default async ({ req, res, log, error }) => {
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
   const storage = new Storage(client);
-  const result = await storage.listFiles(
+  const result = await storage.getFileDownload(
     '67446e2d0030235b1ba4', // bucketId
-    [Query.select(["name", "index.html"])], // queries (optional)
+    '67446e590027a7ed5c65', // queries (optional)
   );
   console.log(result);
 
