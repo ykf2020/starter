@@ -31,6 +31,29 @@ export default async ({ req, res, log, error }) => {
     <html>
       <head>
         <title>My Appwrite App</title>
+        <style>
+          /* Your CSS styles here */
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          ul {
+            list-style: none;
+            padding: 0;
+          }
+          li {
+            margin: 10px 0;
+          }
+          a {
+            color: #f02e65;
+            text-decoration: none;
+          }
+          a:hover {
+            text-decoration: underline;
+          }
+        </style>
       </head>
       <body>
         <h1>${'ya'}</h1>
@@ -39,6 +62,20 @@ export default async ({ req, res, log, error }) => {
           <li><a href="${'https://appwrite.io/docs'}">Join Discord</a></li>
           <li><a href="${'https://appwrite.io/docs'}">Get Inspired</a></li>
         </ul>
+
+        <script>
+          // Your JavaScript code here
+          document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded!');
+            
+            // Example: Add click events to links
+            document.querySelectorAll('a').forEach(link => {
+              link.addEventListener('click', (e) => {
+                console.log('Clicked:', e.target.href);
+              });
+            });
+          });
+        </script>
       </body>
     </html>`,
     200,
