@@ -1,7 +1,4 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { Client, Users } from 'node-appwrite';
-
+import { Client, Storage, Query } from 'node-appwrite';
 // This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
   // You can use the Appwrite SDK to interact with other services
@@ -10,16 +7,12 @@ export default async ({ req, res, log, error }) => {
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
-  const users = new Users(client);
-
-  try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
-  }
+  const storage = new Storage(client);
+  const result = await storage.listFiles(
+    '67446e2d0030235b1ba4', // bucketId
+    [Query.select(["name", "index.html"])], // queries (optional)
+  );
+  console.log(result);
 
   // The req object contains the request data
   if (req.path === "/ping") {
@@ -28,33 +21,59 @@ export default async ({ req, res, log, error }) => {
     return res.text("Pong");
   }
 
-  try {
-    // Read the files
-    const htmlTemplate = await fs.readFile(path.join(process.cwd(), 'assets', 'index.html'), 'utf8');
-    const css = await fs.readFile(path.join(process.cwd(), 'assets', 'styles.css'), 'utf8');
-    const js = await fs.readFile(path.join(process.cwd(), 'assets', 'script.js'), 'utf8');
+  return res.send(
+    `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>My Appwrite App</title>
+        <style>
+          /* Your CSS styles here */
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          ul {
+            list-style: none;
+            padding: 0;
+          }
+          li {
+            margin: 10px 0;
+          }
+          a {
+            color: #f02e65;
+            text-decoration: none;
+          }
+          a:hover {
+            text-decoration: underline;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${'ya'}</h1>
+        <ul>
+          <li><a href="${'https://appwrite.io/docs'}">Learn More</a></li>
+          <li><a href="${'https://appwrite.io/docs'}">Join Discord</a></li>
+          <li><a href="${'https://appwrite.io/docs'}">Get Inspired</a></li>
+        </ul>
 
-    // Define your variables
-    const templateVars = {
-      title: 'Welcome to Appwrite',
-      docsUrl: 'https://appwrite.io/docs',
-      discordUrl: 'https://appwrite.io/discord',
-      inspireUrl: 'https://appwrite.io/docs'
-    };
-
-    // Replace template variables
-    let html = htmlTemplate;
-    Object.entries(templateVars).forEach(([key, value]) => {
-      html = html.replace(`\${${key}}`, value);
-    });
-
-    // Insert CSS and JS
-    html = html.replace('<link rel="stylesheet" href="styles.css">', `<style>${css}</style>`);
-    html = html.replace('<script src="script.js"></script>', `<script>${js}</script>`);
-
-    return res.send(html, 200, {'content-type': 'text/html'});
-  } catch (err) {
-    console.error("Error reading files: " + err.message);
-    return res.text("Internal Server Error", 500);
-  }
+        <script>
+          // Your JavaScript code here
+          document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded!');
+            
+            // Example: Add click events to links
+            document.querySelectorAll('a').forEach(link => {
+              link.addEventListener('click', (e) => {
+                console.log('Clicked:', e.target.href);
+              });
+            });
+          });
+        </script>
+      </body>
+    </html>`,
+    200,
+    {'content-type': 'text/html'}
+  );
 };
