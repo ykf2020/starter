@@ -54,7 +54,7 @@ export default async ({ req, res, log, error }) => {
 
     return res.send(html, 200, {'content-type': 'text/html'});
   } catch (err) {
-    error("Error reading files: " + err.message);
+    console.error("Error reading files: " + err.message);
     return res.text("Internal Server Error", 500);
   }
 };
