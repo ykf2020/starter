@@ -1,90 +1,48 @@
-// import { Client, Users } from 'node-appwrite';
-
-// index.js
 const express = require('express');
-const cors = require('cors');
-
-// Init express app
+const { Client, Users } = require('node-appwrite');
 const app = express();
 
-// Enable CORS
-app.use(cors());
+// Initialize Appwrite client
+const client = new Client()
+  .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
+  .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID);
+const users = new Users(client);
 
-// Main route to serve HTML
+// Middleware to set Appwrite key from headers
+app.use((req, res, next) => {
+  client.setKey(req.headers['x-appwrite-key'] ?? '');
+  next();
+});
+
+// Route to list users
+app.get('/users', async (req, res) => {
+  try {
+    const response = await users.list();
+    console.log(`Total users: ${response.total}`);
+    res.json(response);
+  } catch (err) {
+    console.error("Could not list users: " + err.message);
+    res.status(500).json({ error: "Could not list users" });
+  }
+});
+
+// Ping route
+app.get('/ping', (req, res) => {
+  res.send('Pong');
+});
+
+// Default route
 app.get('/', (req, res) => {
-    // Set content type to HTML
-    res.setHeader('Content-Type', 'text/html');
-    
-    // Send the HTML content
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Appwrite Web Page</title>
-            <style>
-                /* CSS styles */
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 20px;
-                    background-color: #f0f2f5;
-                }
-                .container {
-                    max-width: 800px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }
-                h1 {
-                    color: #2563eb;
-                }
-                #content {
-                    margin-top: 20px;
-                }
-                button {
-                    background-color: #2563eb;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-                button:hover {
-                    background-color: #1d4ed8;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>Welcome to Appwrite</h1>
-                <div id="content">
-                    <p>This page is served from an Appwrite Cloud Function!</p>
-                    <button onclick="updateContent()">Click Me!</button>
-                </div>
-            </div>
-
-            <script>
-                // JavaScript functionality
-                function updateContent() {
-                    const content = document.getElementById('content');
-                    const timestamp = new Date().toLocaleTimeString();
-                    content.innerHTML += \`<p>Button clicked at \${timestamp}</p>\`;
-                }
-            </script>
-        </body>
-        </html>
-    `);
+  res.json({
+    motto: "Build like a team of hundreds_",
+    learn: "https://appwrite.io/docs",
+    connect: "https://appwrite.io/discord",
+    getInspired: "https://builtwith.appwrite.io",
+  });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-// Export the express app
-module.exports = app;
