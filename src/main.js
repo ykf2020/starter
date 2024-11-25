@@ -4,8 +4,8 @@ export default async ({ req, res, log, error }) => {
   // You can use the Appwrite SDK to interact with other services
   // For this example, we're using the Users service
   const client = new Client()
-    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
-    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+    .setEndpoint('https://67445ab24213a6ce118e.appwrite.global/')
+    .setProject('674459e4001ac3695027')
     .setKey(req.headers['x-appwrite-key'] ?? '');
   const storage = new Storage(client);
   const result = await storage.getFileDownload(
