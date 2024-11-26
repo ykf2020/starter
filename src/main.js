@@ -9,10 +9,10 @@ export default async ({ req, res, log, error }) => {
     .setKey(req.headers['x-appwrite-key'] ?? '');
 
   const storage = new Storage(client);
-  const htmlFile = await storage.getFile(
-    '67446e2d0030235b1ba4', // bucketId
-    '67446e590027a7ed5c65' // fileId
-);
+//   const htmlFile = await storage.getFile(
+//     '67446e2d0030235b1ba4',
+//     '67446e590027a7ed5c65'
+// );
 
   // The req object contains the request data
   if (req.path === "/ping") {
