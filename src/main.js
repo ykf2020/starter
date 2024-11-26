@@ -20,10 +20,17 @@ export default async ({ req, res, log, error }) => {
   try {
     const jsFileId = getJSResult.files[0]['$id'];
     const jsFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${jsFileId}/view?project=${projectId}`;
+    const jsResponse = await fetch(jsFileLink);
+    const jsContent = await jsResponse.text();
     console.log('jsFileLink', jsFileLink)
     const cssFileId = getCSSResult.files[0]['$id'];
     const cssFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${cssFileId}/view?project=${projectId}`;
+    const cssResponse = await fetch(cssFileLink);
+    const cssContent = await cssResponse.text();
     console.log('cssFileLink', cssFileLink)
+    
+    
+   
     return res.send(
       `
       <!doctype html>
@@ -32,8 +39,8 @@ export default async ({ req, res, log, error }) => {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Title</title>
-    <script type="module" crossorigin src="${jsFileLink}"></script>
-    <link rel="stylesheet" crossorigin href="${cssFileLink}">
+    <script type="module">${jsContent}</script>
+    <style>${cssContent}</style>
   </head>
   <body>
     <div id="root"></div>
