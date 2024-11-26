@@ -20,10 +20,10 @@ export default async ({ req, res, log, error }) => {
   try {
     const jsFileId = getJSResult.files[0]['$id'];
     const jsFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${jsFileId}/view?project=${projectId}`;
-
+    console.log('jsFileLink', jsFileLink)
     const cssFileId = getCSSResult.files[0]['$id'];
     const cssFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${cssFileId}/view?project=${projectId}`;
-
+    console.log('cssFileLink', cssFileLink)
     return res.send(
       `
       <!doctype html>
