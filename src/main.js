@@ -22,7 +22,25 @@ export default async ({ req, res, log, error }) => {
     const response = await fetch(htmlFileLink);
     const htmlContent = await response.text();
 
-    return res.send(htmlContent, 200, { 'content-type': 'text/html' });
+    return res.send(
+      `
+      <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Title</title>
+    <script type="module" crossorigin src="/assets/index-Dxp5zAIY.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-n_ryQ3BS.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+`,
+      200,
+      { 'content-type': 'text/html' }
+    );
   } catch (err) {
     log(err);
     return res.json({ error: 'Failed to fetch HTML content' }, 500);
