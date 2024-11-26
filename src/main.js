@@ -7,29 +7,22 @@ export default async ({ req, res, log, error }) => {
   // For this example, we're using the Users service
   const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject(projectId)
+    .setProject(projectId);
 
   const storage = new Storage(client);
-  const getHtmlResult = await storage.listFiles(
-    bucketId,
-    [],
-    '.html'
-);
+  const getHtmlResult = await storage.listFiles(bucketId, [], '.html');
 
-
-  if (req.path === "/ping") {
-    return res.text("Pong");
+  if (req.path === '/ping') {
+    return res.text('Pong');
   }
 
-  
   try {
-
     const htmlFileId = getHtmlResult.files[0]['$id'];
-    const htmlFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${htmlFileId}/view?project=${projectId}`
+    const htmlFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${htmlFileId}/view?project=${projectId}`;
     const response = await fetch(htmlFileLink);
     const htmlContent = await response.text();
-    
-    return res.send(htmlContent, 200, {'content-type': 'text/html'});
+
+    return res.send(htmlContent, 200, { 'content-type': 'text/html' });
   } catch (err) {
     log(err);
     return res.json({ error: 'Failed to fetch HTML content' }, 500);
