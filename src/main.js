@@ -1,4 +1,4 @@
-import { Client, Storage, Query } from 'node-appwrite';
+import { Client } from 'node-appwrite';
 // This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
   // You can use the Appwrite SDK to interact with other services
@@ -14,60 +14,14 @@ export default async ({ req, res, log, error }) => {
     // Don't forget to return a response!
     return res.text("Pong");
   }
-
-  return res.send(
-    `<!DOCTYPE html>
-    <html>
-      <head>
-        <title>My Appwrite App</title>
-        <style>
-          /* Your CSS styles here */
-          body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          ul {
-            list-style: none;
-            padding: 0;
-          }
-          li {
-            margin: 10px 0;
-          }
-          a {
-            color: #f02e65;
-            text-decoration: none;
-          }
-          a:hover {
-            text-decoration: underline;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>${'ya'}</h1>
-        <ul>
-          <li><a href="${'https://appwrite.io/docs'}">Learn More</a></li>
-          <li><a href="${'https://appwrite.io/docs'}">Join Discord</a></li>
-          <li><a href="${'https://appwrite.io/docs'}">Get Inspired</a></li>
-        </ul>
-
-        <script>
-          // Your JavaScript code here
-          document.addEventListener('DOMContentLoaded', () => {
-            console.log('Page loaded!');
-            
-            // Example: Add click events to links
-            document.querySelectorAll('a').forEach(link => {
-              link.addEventListener('click', (e) => {
-                console.log('Clicked:', e.target.href);
-              });
-            });
-          });
-        </script>
-      </body>
-    </html>`,
-    200,
-    {'content-type': 'text/html'}
-  );
+  const htmlLink = 'https://cloud.appwrite.io/v1/storage/buckets/67446e2d0030235b1ba4/files/67446e590027a7ed5c65/view?project=674459e4001ac3695027&project=674459e4001ac3695027&mode=admin'
+  try {
+    const response = await fetch(htmlLink);
+    const htmlContent = await response.text();
+    
+    return res.send(htmlContent, 200, {'content-type': 'text/html'});
+  } catch (err) {
+    log(err);
+    return res.json({ error: 'Failed to fetch HTML content' }, 500);
+  }
 };
