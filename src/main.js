@@ -10,8 +10,8 @@ export default async ({ req, res, log, error }) => {
     .setProject(projectId);
 
   const storage = new Storage(client);
-  const getJSResult = await storage.listFiles(bucketId, [], '.js');
-  const getCSSResult = await storage.listFiles(bucketId, [], '.css');
+  const getJSResult = await storage.listFiles(bucketId, [], 'index.js');
+  const getCSSResult = await storage.listFiles(bucketId, [], 'styles.css');
 
   if (req.path === '/ping') {
     return res.text('Pong');
