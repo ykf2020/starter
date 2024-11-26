@@ -10,17 +10,19 @@ export default async ({ req, res, log, error }) => {
     .setProject(projectId);
 
   const storage = new Storage(client);
-  const getHtmlResult = await storage.listFiles(bucketId, [], '.html');
+  const getJSResult = await storage.listFiles(bucketId, [], '.js');
+  const getCSSResult = await storage.listFiles(bucketId, [], '.css');
 
   if (req.path === '/ping') {
     return res.text('Pong');
   }
 
   try {
-    const htmlFileId = getHtmlResult.files[0]['$id'];
-    const htmlFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${htmlFileId}/view?project=${projectId}`;
-    const response = await fetch(htmlFileLink);
-    const htmlContent = await response.text();
+    const jsFileId = getJSResult.files[0]['$id'];
+    const jsFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${jsFileId}/view?project=${projectId}`;
+
+    const cssFileId = getCSSResult.files[0]['$id'];
+    const cssFileLink = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${cssFileId}/view?project=${projectId}`;
 
     return res.send(
       `
@@ -30,8 +32,8 @@ export default async ({ req, res, log, error }) => {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Title</title>
-    <script type="module" crossorigin src="/assets/index-Dxp5zAIY.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-n_ryQ3BS.css">
+    <script type="module" crossorigin src="${jsFileLink}"></script>
+    <link rel="stylesheet" crossorigin href="${cssFileLink}">
   </head>
   <body>
     <div id="root"></div>
